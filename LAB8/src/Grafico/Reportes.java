@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JOptionPane;
+import javax.swing.JComboBox;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -92,18 +93,41 @@ public class Reportes extends JFrame {
 
         btnBuscarBecados.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String carrera = JOptionPane.showInputDialog("Ingrese la carrera:");
-                String sexo = JOptionPane.showInputDialog("Ingrese el sexo:");
-                BuscarBecados buscarBecados = new BuscarBecados(estudiantes);
-                List<Estudiantes> becados = buscarBecados.buscarBecadosPorCarreraYSexo(carrera, sexo);
-                StringBuilder sb = new StringBuilder("Estudiantes Becados:\n");
-                for (Estudiantes becado : becados) {
-                    sb.append(becado.getNombre()).append("\n");
+               
+                String[] opcionesCarreras = {
+                    "Ingeniería Civil", "Ingeniería Eléctrica", "Ingeniería Industrial",
+                    "Ingeniería en Sistemas", "Ingeniería Mecánica", "Ingeniería Marítima"
+                };
+                JComboBox<String> comboCarreras = new JComboBox<>(opcionesCarreras);
+                
+               
+                int inputCarrera = JOptionPane.showConfirmDialog(null, comboCarreras, "Seleccione la carrera:", JOptionPane.OK_CANCEL_OPTION);
+                
+                if (inputCarrera == JOptionPane.OK_OPTION) {
+                    String carrera = (String) comboCarreras.getSelectedItem();
+                    
+                    
+                    String[] opcionesSexo = {"Masculino", "Femenino", "Otro"};
+                    JComboBox<String> comboSexo = new JComboBox<>(opcionesSexo);
+                    
+                    
+                    int inputSexo = JOptionPane.showConfirmDialog(null, comboSexo, "Seleccione el sexo:", JOptionPane.OK_CANCEL_OPTION);
+                    
+                    if (inputSexo == JOptionPane.OK_OPTION) {
+                        String sexo = (String) comboSexo.getSelectedItem();
+                        
+                        BuscarBecados buscarBecados = new BuscarBecados(estudiantes);
+                        List<Estudiantes> becados = buscarBecados.buscarBecadosPorCarreraYSexo(carrera, sexo);
+                        StringBuilder sb = new StringBuilder("Estudiantes Becados:\n");
+                        for (Estudiantes becado : becados) {
+                            sb.append(becado.getNombre()).append("\n");
+                        }
+                        textAreaBecados.setText(sb.toString());
+                    }
                 }
-                textAreaBecados.setText(sb.toString());
             }
         });
-    }
+       }
 
     public void mostrarBecados(Becas becas) {
         StringBuilder sb = new StringBuilder();
