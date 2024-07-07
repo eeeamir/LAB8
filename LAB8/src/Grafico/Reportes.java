@@ -40,8 +40,8 @@ public class Reportes extends JFrame {
         contentPane.setLayout(null);
 
         JLabel lblNewLabel = new JLabel("Reportes");
-        lblNewLabel.setBounds(238, 10, 149, 46);
-        lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 32));
+        lblNewLabel.setBounds(240, 10, 149, 46);
+        lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 32));
         contentPane.add(lblNewLabel);
 
         JLabel lblNewLabel_1 = new JLabel("Estudiantes Becados:");
