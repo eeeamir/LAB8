@@ -8,20 +8,24 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import Logico.Becas;
-
+import Logico.BuscarCedula;
+import Logico.BuscarBecados;
+import Logico.Estudiantes;
 
 public class Reportes extends JFrame {
-	private JTextArea textAreaBecados;
-	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private Formulario formulario;
-	
-	public Reportes(Formulario formulario) {
-        this.formulario = formulario;
+    private JTextArea textAreaBecados;
+    private static final long serialVersionUID = 1L;
+    private JPanel contentPane;
+    private List<Estudiantes> estudiantes;
+
+    public Reportes(List<Estudiantes> estudiantes) {
+        this.estudiantes = estudiantes;
         initComponents(); 
     }
 
@@ -58,7 +62,45 @@ public class Reportes extends JFrame {
         btnRegresar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose(); 
-                formulario.setVisible(true); 
+            }
+        });
+
+  
+        JButton btnBuscarCedula = new JButton("Buscar por Cédula");
+        btnBuscarCedula.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        btnBuscarCedula.setBounds(52, 395, 184, 34);
+        contentPane.add(btnBuscarCedula);
+
+        btnBuscarCedula.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String cedula = JOptionPane.showInputDialog("Ingrese la cédula:");
+                BuscarCedula buscarCedula = new BuscarCedula(estudiantes);
+                Estudiantes estudiante = buscarCedula.buscarPorCedula(cedula);
+                if (estudiante != null) {
+                    textAreaBecados.setText("Estudiante encontrado:\n" + estudiante.getNombre());
+                } else {
+                    textAreaBecados.setText("Estudiante no encontrado.");
+                }
+            }
+        });
+
+     
+        JButton btnBuscarBecados = new JButton("Buscar Becados por Carrera y Sexo");
+        btnBuscarBecados.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        btnBuscarBecados.setBounds(246, 395, 178, 34);
+        contentPane.add(btnBuscarBecados);
+
+        btnBuscarBecados.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String carrera = JOptionPane.showInputDialog("Ingrese la carrera:");
+                String sexo = JOptionPane.showInputDialog("Ingrese el sexo:");
+                BuscarBecados buscarBecados = new BuscarBecados(estudiantes);
+                List<Estudiantes> becados = buscarBecados.buscarBecadosPorCarreraYSexo(carrera, sexo);
+                StringBuilder sb = new StringBuilder("Estudiantes Becados:\n");
+                for (Estudiantes becado : becados) {
+                    sb.append(becado.getNombre()).append("\n");
+                }
+                textAreaBecados.setText(sb.toString());
             }
         });
     }
