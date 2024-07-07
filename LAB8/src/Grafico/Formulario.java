@@ -7,6 +7,10 @@ import javax.swing.border.EmptyBorder;
 import Logico.Estudiantes;
 import Logico.Becas;
 import Excepciones.IndiceExcepcion;
+import Excepciones.NombreExcepcion;
+import Excepciones.CarreraExcepcion;
+import Excepciones.SexoExcepcion;
+import Excepciones.CedulaExcepcion;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,15 +58,15 @@ public class Formulario extends JFrame {
 
     private void initComponents() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 932, 552);
+        setBounds(100, 100, 750, 500);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         contentPane.setLayout(null);
 
-        JLabel lblNewLabel = new JLabel("Información de estudiantes");
-        lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 22));
-        lblNewLabel.setBounds(277, 10, 271, 62);
+        JLabel lblNewLabel = new JLabel("Sistema de becas para estudiantes");
+        lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        lblNewLabel.setBounds(120, 10, 550, 62);
         contentPane.add(lblNewLabel);
 
         JLabel lblNewLabel_1 = new JLabel("Nombre:");
@@ -154,10 +158,28 @@ public class Formulario extends JFrame {
             double indice = Double.parseDouble(textIndice.getText());
             String carrera = (String) comboBoxCarreras.getSelectedItem();
             String sexo = (String) comboSexo.getSelectedItem();
+          
+            
+            if (!nombre.matches("[a-zA-ZÑñáéíóúÁÉÍÓÚ]+")) {
+                throw new NombreExcepcion("El nombre solo puede contener letras.");
+            }
+            
+            if (!cedula.matches("[0-9-]+")) {
+                throw new CedulaExcepcion("La cedula solo puede contener numeros y guiones");
+            }
+            
+            if (sexo == null || sexo.isEmpty()) {
+                throw new SexoExcepcion("Debe seleccionar su sexo");
+            }
 
             if (indice < 0 || indice > 3) {
                 throw new IndiceExcepcion("El índice debe estar entre 0 y 3.");
             }
+            
+            if (carrera == null || carrera.isEmpty()) {
+                throw new CarreraExcepcion("Debe seleccionar una carrera.");
+            }
+            
 
             Estudiantes estudiante = new Estudiantes(nombre, cedula, carrera, sexo, indice);
             estudiantes.add(estudiante);
@@ -173,8 +195,16 @@ public class Formulario extends JFrame {
             comboBoxCarreras.setSelectedIndex(-1);
             comboSexo.setSelectedIndex(-1);
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Por favor, ingrese datos válidos para Índice.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Por favor, ingrese datos válidos.", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (IndiceExcepcion e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (NombreExcepcion e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (CarreraExcepcion e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (CedulaExcepcion e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SexoExcepcion e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
