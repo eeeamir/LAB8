@@ -11,6 +11,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -20,24 +21,29 @@ import javax.swing.JButton;
 
 public class Formulario extends JFrame {
 
-	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private JTextField textNombre;
-	private JTextField textIndice;
-	private JTextField textCedula;
-	private Estudiantes estudiante;
-	private JComboBox comboBoxCarreras;
-	private ArrayList<Estudiantes> estudiantes;
-	private Becas becas;
-	
-	public Formulario(Becas becas) {
-        this.becas = becas;}
-	
-	public static void main(String[] args) {
+    private static final long serialVersionUID = 1L;
+    private JPanel contentPane;
+    private JTextField textNombre;
+    private JTextField textIndice;
+    private JTextField textCedula;
+    private Estudiantes estudiante;
+    private JComboBox<String> comboBoxCarreras;
+    private JComboBox<String> comboSexo;
+    private List<Estudiantes> estudiantes;
+    private Becas becas;
+
+    public Formulario(Becas becas) {
+        this.becas = becas;
+        this.estudiantes = new ArrayList<>();
+        initComponents();
+    }
+
+    public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    Formulario frame = new Formulario();
+                    Becas becas = new Becas();
+                    Formulario frame = new Formulario(becas);
                     frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -46,9 +52,7 @@ public class Formulario extends JFrame {
         });
     }
 
-    public Formulario() {
-        estudiantes = new ArrayList<>();
-        becas = new Becas(); 
+    private void initComponents() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 932, 552);
         contentPane = new JPanel();
@@ -77,7 +81,7 @@ public class Formulario extends JFrame {
         lblSexo.setBounds(21, 150, 95, 22);
         contentPane.add(lblSexo);
 
-        JComboBox<String> comboSexo = new JComboBox<>();
+        comboSexo = new JComboBox<>();
         comboSexo.setFont(new Font("Tahoma", Font.PLAIN, 20));
         comboSexo.setBounds(141, 150, 153, 25);
         comboSexo.addItem("Masculino");
@@ -128,7 +132,6 @@ public class Formulario extends JFrame {
         btnReportes.setBounds(460, 200, 184, 34);
         contentPane.add(btnReportes);
 
-       
         btnGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -138,13 +141,11 @@ public class Formulario extends JFrame {
 
         btnReportes.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                dispose(); 
-                Reportes reportes = new Reportes(Formulario.this); 
+                Reportes reportes = new Reportes(estudiantes); 
                 reportes.setVisible(true); 
-                reportes.mostrarBecados(becas); 
             }
         });
-       }
+    }
 
     private void guardarDatos() {
         try {
@@ -152,14 +153,15 @@ public class Formulario extends JFrame {
             String cedula = textCedula.getText();
             double indice = Double.parseDouble(textIndice.getText());
             String carrera = (String) comboBoxCarreras.getSelectedItem();
+            String sexo = (String) comboSexo.getSelectedItem();
 
             if (indice < 0 || indice > 3) {
                 throw new IndiceExcepcion("El índice debe estar entre 0 y 3.");
             }
 
-            Estudiantes estudiante = new Estudiantes(nombre, cedula, carrera, indice);
+            Estudiantes estudiante = new Estudiantes(nombre, cedula, carrera, sexo, indice);
             estudiantes.add(estudiante);
-            becas.agregarEstudiante(estudiante); 
+            becas.agregarEstudiante(estudiante);
 
             System.out.println("Información del estudiante guardada: " + estudiante.toString());
 
@@ -169,6 +171,7 @@ public class Formulario extends JFrame {
             textCedula.setText("");
             textIndice.setText("");
             comboBoxCarreras.setSelectedIndex(-1);
+            comboSexo.setSelectedIndex(-1);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Por favor, ingrese datos válidos para Índice.", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (IndiceExcepcion e) {
@@ -176,3 +179,4 @@ public class Formulario extends JFrame {
         }
     }
 }
+
